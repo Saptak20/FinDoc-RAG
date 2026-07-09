@@ -1,1 +1,29 @@
+# API Server
+fastapi>=0.110.0
+uvicorn>=0.28.0
+python-multipart>=0.0.9
 
+# Database
+sqlalchemy[asyncio]>=2.0.28
+asyncpg>=0.29.0
+
+# Configuration
+pydantic>=2.5
+pydantic-settings>=2.2.1
+
+# LangChain Core
+langchain>=1.0.13
+langchain-community
+langchain-text-splitters
+
+# Ollama Integration
+langchain-ollama>=0.1.0
+
+# Document Processing
+pypdf>=4.1.0
+
+# Vector Store
+faiss-cpu
+
+# Workflow Orchestration
+langgraph>=0.0.30

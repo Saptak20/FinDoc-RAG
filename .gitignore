@@ -1,1 +1,46 @@
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+.pytest_cache/
+.coverage
+htmlcov/
 
+# Environment Configuration & Secrets (CRITICAL)
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# IDEs, Editors & System Files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+.DS_Store
+Thumbs.db
+
+# Project-Specific Local Storage & Data (FinDoc RAG Specific)
+# Excludes raw financial docs and heavy PDFs
+data/raw/*
+!data/raw/.gitkeep
+
+# Excludes local FAISS/Chroma database binary files
+data/vector_store/*
+!data/vector_store/.gitkeep
+
+# Excludes local PostgreSQL data dumps or backups if created locally
+*.sql
+*.dump
+
+# Local Logs & Evaluation Outputs
+*.log
+logs/
+evaluation/outputs/
