@@ -1,4 +1,4 @@
-# FinDoc-RAG (Financial Document RAG using Local Ollama)
+# FinDoc-RAG (Financial Document RAG)
 
 This project implements a Retrieval-Augmented Generation (RAG) system for financial documents, orchestrated using **LangGraph** and utilizing local **Ollama** LLMs and embedding models instead of external paid APIs.
 
