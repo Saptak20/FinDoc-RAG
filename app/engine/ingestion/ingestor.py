@@ -1,4 +1,5 @@
 import os
+import hashlib
 from typing import List
 
 from langchain_core.documents import Document
@@ -17,16 +18,7 @@ class SECIngestor:
         data_dir: str | None = None,
         persist_dir: str | None = None,
     ):
-        """
-        Initialize the SEC document ingestion pipeline.
-
-        The ingestor uses:
-
-        - Local PDF documents
-        - Recursive text chunking
-        - Ollama embeddings
-        - FAISS vector storage
-        """
+        """Initialize the SEC document ingestion pipeline."""
 
         self.data_dir = data_dir or settings.RAW_DATA_PATH
         self.persist_dir = persist_dir or settings.VECTOR_STORE_PATH
@@ -37,11 +29,7 @@ class SECIngestor:
         )
 
     def load_documents(self) -> List[Document]:
-        """
-        Load all PDF documents from the raw data directory.
-
-        Each PDF page is returned as a LangChain Document object.
-        """
+        """Load all PDF documents from the raw data directory."""
 
         logger.info(
             f"Loading PDF documents from: {self.data_dir}"
@@ -77,11 +65,7 @@ class SECIngestor:
         self,
         documents: List[Document],
     ) -> List[Document]:
-        """
-        Split loaded PDF pages into overlapping text chunks.
-
-        Chunk size and overlap are controlled through application settings.
-        """
+        """Split loaded PDF pages into overlapping text chunks."""
 
         if not documents:
             raise ValueError(
@@ -118,18 +102,94 @@ class SECIngestor:
 
         return chunks
 
+    def assign_chunk_ids(
+        self,
+        chunks: List[Document],
+    ) -> List[Document]:
+        """
+        Assign deterministic IDs and per-page indexes
+        to document chunks.
+
+        Chunk ID format:
+
+        filename::page_<page>::chunk_<index>::<hash>
+        """
+
+        if not chunks:
+            raise ValueError(
+                "Cannot assign chunk IDs to an empty chunk list."
+            )
+
+        logger.info(
+            f"Assigning stable IDs to {len(chunks)} chunks."
+        )
+
+        page_counters = {}
+
+        for chunk in chunks:
+            source = chunk.metadata.get("source")
+            page = chunk.metadata.get("page")
+
+            if source is None:
+                raise ValueError(
+                    "Chunk metadata is missing 'source'."
+                )
+
+            if page is None:
+                raise ValueError(
+                    "Chunk metadata is missing 'page'."
+                )
+
+            filename = os.path.basename(source)
+
+            page_key = (
+                source,
+                page,
+            )
+
+            chunk_index = page_counters.get(
+                page_key,
+                0,
+            )
+
+            hash_input = (
+                f"{source}|"
+                f"{page}|"
+                f"{chunk_index}|"
+                f"{chunk.page_content}"
+            )
+
+            hash_suffix = hashlib.sha256(
+                hash_input.encode("utf-8")
+            ).hexdigest()[:12]
+
+            chunk_id = (
+                f"{filename}"
+                f"::page_{page}"
+                f"::chunk_{chunk_index}"
+                f"::{hash_suffix}"
+            )
+
+            chunk.metadata["chunk_index"] = chunk_index
+            chunk.metadata["chunk_id"] = chunk_id
+
+            page_counters[page_key] = chunk_index + 1
+
+        logger.info(
+            f"Assigned stable IDs to {len(chunks)} chunks."
+        )
+
+        return chunks
+
     def build_vector_store(
         self,
         chunks: List[Document],
         batch_size: int = 32,
     ) -> FAISS:
         """
-        Embed document chunks in controlled batches,
-        incrementally build a FAISS index,
-        and persist the completed index locally.
-
-        Batching prevents sending the entire document corpus
-        to Ollama in one embedding request.
+        Embed chunks in controlled batches,
+        incrementally build FAISS,
+        and persist the completed index.
         """
 
         if not chunks:
@@ -183,19 +243,12 @@ class SECIngestor:
             )
 
             if vector_store is None:
-
-                # First batch creates the FAISS index.
-
                 vector_store = FAISS.from_documents(
                     documents=batch,
                     embedding=self.embeddings,
                 )
 
             else:
-
-                # Remaining batches are embedded and
-                # incrementally added to the existing index.
-
                 vector_store.add_documents(
                     documents=batch,
                 )
@@ -230,7 +283,7 @@ class SECIngestor:
         )
 
         logger.info(
-            f"FAISS vector store saved successfully."
+            "FAISS vector store saved successfully."
         )
 
         logger.info(
@@ -241,7 +294,6 @@ class SECIngestor:
 
 
 if __name__ == "__main__":
-
     logger.info(
         "Starting standalone ingestion pipeline."
     )
@@ -251,6 +303,8 @@ if __name__ == "__main__":
     documents = ingestor.load_documents()
 
     chunks = ingestor.chunk_documents(documents)
+
+    chunks = ingestor.assign_chunk_ids(chunks)
 
     vector_store = ingestor.build_vector_store(
         chunks=chunks,
