@@ -1,6 +1,3 @@
-
-
-````markdown
 # FinDoc-RAG
 
 <div align="center">
