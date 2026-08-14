@@ -1,4 +1,4 @@
-Absolutely. Here is the **complete updated `README.md`** ready to copy-paste.
+
 
 ````markdown
 # FinDoc-RAG
