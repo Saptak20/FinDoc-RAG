@@ -21,9 +21,16 @@ langchain-ollama>=0.1.0
 
 # Document Processing
 pypdf>=4.1.0
+tqdm>=4.66.0
 
 # Vector Store
 faiss-cpu
+
+# Sparse Retrieval
+rank-bm25>=0.2.2
+
+# Reranking
+sentence-transformers>=3.0.0
 
 # Workflow Orchestration
 langgraph>=0.0.30

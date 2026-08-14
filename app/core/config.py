@@ -29,6 +29,7 @@ class Settings(BaseSettings):
     # Retrieval
     TOP_K: int
     FINAL_CONTEXT_K: int
+    RERANKER_MODEL: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
     model_config = SettingsConfigDict(
         env_file=".env",
