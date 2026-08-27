@@ -1,8 +1,10 @@
 import time
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 
 from app.api.dependencies import get_rag_pipeline
 from app.core.logger import logger
+from app.core.rate_limiter import rate_limit_chat
+from app.db.session import log_query_to_db
 from app.engine.pipelines import RAGPipeline
 from app.schemas.chat import ChatMetrics, ChatRequest, ChatResponse, SourceItem
 
@@ -13,13 +15,16 @@ router = APIRouter(prefix="/chat", tags=["chat"])
     "",
     response_model=ChatResponse,
     status_code=status.HTTP_200_OK,
+    dependencies=[Depends(rate_limit_chat)],
     summary="Ask a question about financial documents",
     description="Executes hybrid retrieval (FAISS + BM25), Cross-Encoder reranking, and local Ollama generation using LangGraph.",
 )
 async def chat_endpoint(
     request: ChatRequest,
+    background_tasks: BackgroundTasks,
     pipeline: RAGPipeline = Depends(get_rag_pipeline),
 ) -> ChatResponse:
+
     """
     Process a financial query through the LangGraph RAG pipeline.
     """
@@ -30,7 +35,7 @@ async def chat_endpoint(
             detail="Query cannot be empty or contain only whitespace.",
         )
 
-    logger.info(f"Received API chat request: {request.query!r}")
+    logger.info(f"Received API chat request (length: {len(request.query)} chars)")
 
     start_time = time.perf_counter()
 
@@ -41,6 +46,12 @@ async def chat_endpoint(
             sparse_top_k=request.sparse_top_k,
             final_top_k=request.final_top_k,
         )
+    except ValueError as val_err:
+        logger.warning(f"Validation error in RAG pipeline: {val_err}")
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=str(val_err),
+        )
     except Exception as exc:
         logger.exception(f"Unhandled error during RAG pipeline execution: {exc}")
         raise HTTPException(
@@ -49,8 +60,9 @@ async def chat_endpoint(
         )
 
     latency = time.perf_counter() - start_time
+    answer = result.get("answer", "")
 
-    if result.get("error") and not result.get("answer"):
+    if result.get("error") and not answer:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=result.get("error"),
@@ -79,9 +91,17 @@ async def chat_endpoint(
         f"reranked={metrics.reranked_chunks}"
     )
 
+    # Asynchronously log query metadata to database without blocking client
+    background_tasks.add_task(
+        log_query_to_db,
+        request.query,
+        answer,
+        latency * 1000.0,
+    )
+
     return ChatResponse(
         query=request.query,
-        answer=result.get("answer", ""),
+        answer=answer,
         sources=sources,
         metrics=metrics,
     )

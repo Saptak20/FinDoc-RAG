@@ -64,7 +64,7 @@ class CrossEncoderReranker:
 
         start_time = time.perf_counter()
         self.model = CrossEncoder(
-            model_name=self.model_name,
+            model_name_or_path=self.model_name,
             device=self.device,
         )
         self.load_time_seconds = time.perf_counter() - start_time

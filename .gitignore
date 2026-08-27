@@ -44,3 +44,12 @@ data/vector_store/*
 *.log
 logs/
 evaluation/outputs/
+
+# Frontend build artifacts
+frontend/dist/
+frontend/node_modules/
+frontend/.vite/
+frontend/.cache/
+
+# Docker
+.dockerignore

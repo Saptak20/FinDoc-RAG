@@ -16,8 +16,9 @@ def test_hybrid_retriever():
     # 1. Initialize HybridRetriever
     retriever = HybridRetriever()
 
-    assert retriever.vector_count == 2710, f"Expected 2710 vectors, got {retriever.vector_count}"
-    assert retriever.chunk_count == 2710, f"Expected 2710 chunks, got {retriever.chunk_count}"
+    assert retriever.vector_count >= 2710, f"Expected at least 2710 vectors, got {retriever.vector_count}"
+    assert retriever.chunk_count >= 2710, f"Expected at least 2710 chunks, got {retriever.chunk_count}"
+
 
     # 2. Run Hybrid Search with query "EBITDA"
     query = "EBITDA"

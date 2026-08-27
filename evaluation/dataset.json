@@ -1,0 +1,194 @@
+[
+  {
+    "id": "q001",
+    "category": "Sustainability & ESG",
+    "question": "What is Tata Steel's target year for achieving Net Zero carbon emissions?",
+    "expected_sources": [
+      {
+        "source": "OTC_TATLY_2024.pdf",
+        "page": 1
+      }
+    ],
+    "expected_answer": "Tata Steel has set an ambitious target of achieving Net Zero by 2045."
+  },
+  {
+    "id": "q002",
+    "category": "Financial Performance",
+    "question": "What were Tata Steel's standalone revenues and EBITDA in FY2023-24?",
+    "expected_sources": [
+      {
+        "source": "OTC_TATLY_2024.pdf",
+        "page": 14
+      }
+    ],
+    "expected_answer": "In FY2023-24, Tata Steel's standalone revenues were ₹1,40,987 crore with an EBITDA of ₹31,004 crore."
+  },
+  {
+    "id": "q003",
+    "category": "Operations & Efficiency",
+    "question": "What were the savings achieved through Shikhar25 projects in FY2023-24?",
+    "expected_sources": [
+      {
+        "source": "OTC_TATLY_2024.pdf",
+        "page": 8
+      }
+    ],
+    "expected_answer": "Savings through Shikhar25 projects were ₹6,821 crore."
+  },
+  {
+    "id": "q004",
+    "category": "Entity & Leadership",
+    "question": "Who is the Chief Executive Officer of Tata Steel UK?",
+    "expected_sources": [
+      {
+        "source": "OTC_TATLY_2024.pdf",
+        "page": 11
+      }
+    ],
+    "expected_answer": "Rajesh Nair is the Chief Executive Officer of Tata Steel UK."
+  },
+  {
+    "id": "q005",
+    "category": "Entity & Leadership",
+    "question": "Who is the Chief Executive Officer of Tata Steel Nederland?",
+    "expected_sources": [
+      {
+        "source": "OTC_TATLY_2024.pdf",
+        "page": 11
+      }
+    ],
+    "expected_answer": "Hans van den Berg is the Chief Executive Officer of Tata Steel Nederland."
+  },
+  {
+    "id": "q006",
+    "category": "Financial Ratios",
+    "question": "What was Tata Steel's standalone EBITDA margin for FY2023-24?",
+    "expected_sources": [
+      {
+        "source": "OTC_TATLY_2024.pdf",
+        "page": 14
+      }
+    ],
+    "expected_answer": "Tata Steel's standalone EBITDA margin for FY2023-24 was 22%."
+  },
+  {
+    "id": "q007",
+    "category": "Segment Performance",
+    "question": "What was the EBITDA loss reported by Tata Steel Europe (TSE) during FY2023-24?",
+    "expected_sources": [
+      {
+        "source": "OTC_TATLY_2024.pdf",
+        "page": 207
+      }
+    ],
+    "expected_answer": "TSE reported an EBITDA loss of ₹7,612 crore during FY2023-24."
+  },
+  {
+    "id": "q008",
+    "category": "Accounting & Definitions",
+    "question": "How is EBITDA defined in the financial notes of the report?",
+    "expected_sources": [
+      {
+        "source": "OTC_TATLY_2024.pdf",
+        "page": 289
+      }
+    ],
+    "expected_answer": "EBITDA is defined as Profit before tax +/(-) Exceptional items + Net finance charges + Depreciation and amortisation."
+  },
+  {
+    "id": "q009",
+    "category": "Operations & Mining",
+    "question": "Which iron ore mine greenery is highlighted in the report profile?",
+    "expected_sources": [
+      {
+        "source": "OTC_TATLY_2024.pdf",
+        "page": 2
+      }
+    ],
+    "expected_answer": "Noamundi Mine."
+  },
+  {
+    "id": "q010",
+    "category": "Financial Ratios",
+    "question": "What was Tata Steel's consolidated EBITDA margin in FY2023-24?",
+    "expected_sources": [
+      {
+        "source": "OTC_TATLY_2024.pdf",
+        "page": 215
+      }
+    ],
+    "expected_answer": "Consolidated EBITDA Margin in FY2023-24 was 10.21% (down from 13.44% in the previous year)."
+  },
+  {
+    "id": "q011",
+    "category": "Business Segments",
+    "question": "Which B2B customer segments are listed under Tata Steel's product portfolio?",
+    "expected_sources": [
+      {
+        "source": "OTC_TATLY_2024.pdf",
+        "page": 6
+      }
+    ],
+    "expected_answer": "Key B2B segments include Construction, Infrastructure, Energy (Oil & Gas, Wind, Solar), Automotive and ancillaries, and Engineering Goods."
+  },
+  {
+    "id": "q012",
+    "category": "Financial Analysis",
+    "question": "What caused the decline in consolidated revenues in FY2023-24?",
+    "expected_sources": [
+      {
+        "source": "OTC_TATLY_2024.pdf",
+        "page": 156
+      }
+    ],
+    "expected_answer": "Consolidated revenues declined by ₹14,182 crore (6%) primarily due to lower steel realisations across geographies and lower deliveries at European operations."
+  },
+  {
+    "id": "q013",
+    "category": "Segment Performance",
+    "question": "What were the total deliveries and EBITDA of Tata Steel's Indian operations including NINL?",
+    "expected_sources": [
+      {
+        "source": "OTC_TATLY_2024.pdf",
+        "page": 157
+      }
+    ],
+    "expected_answer": "Total deliveries from Indian operations stood at 19.91 MT (up 6%), turnover was ₹1,42,902 crore, and EBITDA was ₹31,057 crore (improved by 10%)."
+  },
+  {
+    "id": "q014",
+    "category": "Human Capital & CSR",
+    "question": "How many employees were on roll and what was the CSR spend in FY2023-24?",
+    "expected_sources": [
+      {
+        "source": "OTC_TATLY_2024.pdf",
+        "page": 8
+      }
+    ],
+    "expected_answer": "There were 43,263 employees on roll and CSR spend was ₹580 crore."
+  },
+  {
+    "id": "q015",
+    "category": "Operational Capacity",
+    "question": "What is Tata Steel's annual global crude steel production capacity?",
+    "expected_sources": [
+      {
+        "source": "OTC_TATLY_2024.pdf",
+        "page": 5
+      }
+    ],
+    "expected_answer": "Tata Steel has an annual global crude steel production capacity of 35 MTPA (with 21.6 MTPA in India)."
+  },
+  {
+    "id": "q016",
+    "category": "Social Capital & Health",
+    "question": "How many households are reached by the MANSI+ maternal and newborn survival initiative?",
+    "expected_sources": [
+      {
+        "source": "OTC_TATLY_2024.pdf",
+        "page": 3
+      }
+    ],
+    "expected_answer": "MANSI+ reaches 3 million households across East Singhbhum, West Singhbhum, and Seraikela Kharsawan, managing 45,000+ high-risk pregnancies."
+  }
+]

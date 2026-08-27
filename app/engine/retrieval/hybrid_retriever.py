@@ -1,4 +1,5 @@
 import os
+import threading
 from typing import List, Optional
 
 from app.core.config import settings
@@ -17,6 +18,7 @@ class HybridRetriever:
     - Coordinate dense FAISS retrieval and sparse BM25 retrieval over the canonical corpus.
     - Perform Reciprocal Rank Fusion on both ranked result candidate lists.
     - Output a unified, deduplicated list of FusedResult items ordered by fused score.
+    - Support thread-safe atomic hot-reloading when new documents are ingested.
     """
 
     def __init__(
@@ -28,6 +30,7 @@ class HybridRetriever:
         rrf_k: int = 60,
     ):
         self.persist_dir = persist_dir or settings.VECTOR_STORE_PATH
+        self._lock = threading.Lock()
 
         logger.info("Initializing HybridRetriever...")
 
@@ -54,6 +57,27 @@ class HybridRetriever:
             f"FAISS vectors: {self.dense_retriever.vector_count}, "
             f"BM25 chunks: {self.bm25_retriever.chunk_count}, "
             f"RRF k: {self.rank_fusion.rrf_k}"
+        )
+
+    def reload(self, persist_dir: Optional[str] = None) -> None:
+        """
+        Thread-safe hot-reload of dense and sparse retrieval indexes from disk.
+        Atomically swaps the retriever references so ongoing queries are not interrupted.
+        """
+        target_dir = persist_dir or self.persist_dir
+        logger.info(f"Reloading HybridRetriever indexes from {target_dir}...")
+
+        new_dense = DenseRetriever(persist_dir=target_dir)
+        new_bm25 = BM25Retriever(persist_dir=target_dir)
+
+        with self._lock:
+            self.dense_retriever = new_dense
+            self.bm25_retriever = new_bm25
+
+        logger.info(
+            f"HybridRetriever reloaded successfully. "
+            f"FAISS vectors: {self.dense_retriever.vector_count}, "
+            f"BM25 chunks: {self.bm25_retriever.chunk_count}"
         )
 
     def hybrid_search(
@@ -94,11 +118,15 @@ class HybridRetriever:
             f"dense_k: {d_k}, sparse_k: {s_k}, final_k: {f_k}"
         )
 
+        with self._lock:
+            dense_retriever = self.dense_retriever
+            bm25_retriever = self.bm25_retriever
+
         # 1. Execute dense semantic retrieval
-        dense_results = self.dense_retriever.dense_search(query=query, k=d_k)
+        dense_results = dense_retriever.dense_search(query=query, k=d_k)
 
         # 2. Execute sparse lexical retrieval
-        sparse_results = self.bm25_retriever.bm25_search(query=query, k=s_k)
+        sparse_results = bm25_retriever.bm25_search(query=query, k=s_k)
 
         # 3. Fuse ranked results with RRF
         fused_results = self.rank_fusion.fuse(
@@ -136,9 +164,11 @@ class HybridRetriever:
     @property
     def vector_count(self) -> int:
         """Total vectors in the dense store."""
-        return self.dense_retriever.vector_count
+        with self._lock:
+            return self.dense_retriever.vector_count
 
     @property
     def chunk_count(self) -> int:
         """Total chunks in the sparse store."""
-        return self.bm25_retriever.chunk_count
+        with self._lock:
+            return self.bm25_retriever.chunk_count

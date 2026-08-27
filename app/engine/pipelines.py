@@ -271,11 +271,22 @@ class RAGPipeline:
         Returns:
             State dictionary containing answer, sources, context, and metadata.
         """
+        d_k = dense_top_k if dense_top_k is not None else settings.TOP_K
+        s_k = sparse_top_k if sparse_top_k is not None else settings.TOP_K
+        f_k = final_top_k if final_top_k is not None else settings.FINAL_CONTEXT_K
+
+        if d_k <= 0:
+            raise ValueError(f"dense_top_k must be greater than zero, got {d_k}.")
+        if s_k <= 0:
+            raise ValueError(f"sparse_top_k must be greater than zero, got {s_k}.")
+        if f_k <= 0:
+            raise ValueError(f"final_top_k must be greater than zero, got {f_k}.")
+
         initial_state: RAGState = {
             "query": query,
-            "dense_top_k": dense_top_k or settings.TOP_K,
-            "sparse_top_k": sparse_top_k or settings.TOP_K,
-            "final_top_k": final_top_k or settings.FINAL_CONTEXT_K,
+            "dense_top_k": d_k,
+            "sparse_top_k": s_k,
+            "final_top_k": f_k,
             "retrieval_results": [],
             "reranked_results": [],
             "context": "",
@@ -287,6 +298,14 @@ class RAGPipeline:
 
         return self.graph.invoke(initial_state)
 
+    def reload_retrievers(self, persist_dir: Optional[str] = None) -> None:
+        """
+        Hot-reload underlying hybrid retrievers without reloading CrossEncoder or LLM.
+        """
+        logger.info("RAGPipeline delegating hot-reload to HybridRetriever...")
+        self.hybrid_retriever.reload(persist_dir=persist_dir)
+
     def run(self, query: str, **kwargs) -> Dict[str, Any]:
         """Alias for invoke."""
         return self.invoke(query=query, **kwargs)
+

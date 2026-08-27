@@ -34,3 +34,6 @@ sentence-transformers>=3.0.0
 
 # Workflow Orchestration
 langgraph>=0.0.30
+
+# Testing
+pytest>=8.0.0

@@ -1,0 +1,24 @@
+# ==============================================================================
+# Cloudflare Named Tunnel Configuration for FinDoc-RAG (Production)
+# ==============================================================================
+# 1. Create a tunnel:
+#    cloudflared tunnel create findoc-rag
+# 2. Note your Tunnel-UUID and credentials file path:
+#    /home/<user>/.cloudflared/<tunnel-uuid>.json
+# 3. Rename this file to config.yml and replace <TUNNEL_UUID> and <YOUR_DOMAIN>
+# ==============================================================================
+
+tunnel: <TUNNEL_UUID>
+credentials-file: /etc/cloudflared/<TUNNEL_UUID>.json
+
+ingress:
+  # Route all traffic to the unified frontend (nginx) which serves the React app
+  # and proxies /api/* to the FastAPI backend.
+  - hostname: <YOUR_DOMAIN>
+    service: http://127.0.0.1:80
+    originRequest:
+      connectTimeout: 30s
+      http2Origin: false
+
+  # Catch-all fallback rule (required by Cloudflare)
+  - service: http_status:404

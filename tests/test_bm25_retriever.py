@@ -17,7 +17,8 @@ def test_bm25_retriever():
     
     # 2. Check total corpus chunks
     chunk_count = retriever.chunk_count
-    assert chunk_count == 2710, f"Expected 2710 chunks, got {chunk_count}"
+    assert chunk_count >= 2710, f"Expected at least 2710 chunks, got {chunk_count}"
+
     
     # 3. Test exact financial term retrieval
     query = "EBITDA"
